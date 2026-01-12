@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Frasco de Notas para mi Ximenita ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #020617; color: white; font-family: 'Montserrat', sans-serif; text-align: center; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
+        h1 { font-family: 'Playfair Display', serif; color: #ffd700; margin-top: 20px; font-size: 2em; }
+        .instrucciones { font-size: 0.9em; opacity: 0.8; max-width: 320px; margin-bottom: 30px; line-height: 1.5; }
+        
+        .jar-container { position: relative; width: 160px; height: 220px; cursor: pointer; margin-bottom: 25px; }
+        .jar { width: 100%; height: 100%; border: 4px solid rgba(255, 215, 0, 0.5); border-radius: 20px 20px 50px 50px; position: relative; background: rgba(255, 255, 255, 0.05); overflow: hidden; box-shadow: 0 0 40px rgba(255, 215, 0, 0.1); transition: 0.3s; }
+        .jar-lid { width: 90px; height: 20px; background: #ffd700; margin: 0 auto; border-radius: 5px; position: relative; z-index: 2; }
+        .paper { width: 25px; height: 15px; position: absolute; border-radius: 3px; opacity: 0.7; }
+
+        .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 350px; width: 100%; }
+        .btn { padding: 12px 8px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.75em; transition: 0.3s; text-transform: uppercase; }
+        .amarillo { background: #fef08a; color: #854d0e; }
+        .verde { background: #bbf7d0; color: #166534; } 
+        .azul { background: #bfdbfe; color: #1e3a8a; } 
+        .rojo { background: #fecaca; color: #991b1b; } 
+
+        #display-nota { margin-top: 30px; padding: 25px; border-radius: 20px; max-width: 320px; min-height: 100px; display: none; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); line-height: 1.6; border: 2px solid #ffd700; background: rgba(255,255,255,0.1); font-size: 1.05em; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+<link type="text/css" rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+    <h1>Mi Frasco para mi Ximenita</h1>
+    <p class="instrucciones">Elige cómo te sientes hoy, mi amor. Aquí están mis palabras para ti...(Puedes oprimir las veces que consideres necesarios)</p>
+
+    <div class="jar-container" onclick="sacarCualquiera()">
+        <div class="jar-lid"></div>
+        <div class="jar" id="papelitos-inner"></div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn amarillo" onclick="mostrarNota('estresado')">Estás Estresada</button>
+        <button class="btn verde" onclick="mostrarNota('desmotivado')">Desmotivada</button>
+        <button class="btn azul" onclick="mostrarNota('extrañas')">Me Extrañas</button>
+        <button class="btn rojo" onclick="mostrarNota('amor')">Necesitas Amor</button>
+    </div>
+
+    <div id="display-nota"></div>
+
+    <script>
+        const notas = {
+            'estresado': [
+                "Respira hondo, mi vida. Yo estoy aquí para ser tu calma en medio de cualquier tormenta. ",
+                "No dejes que el mundo te agobie, amor. Cierra los ojos y siente mi abrazo apretado.",
+                "Eres la mujer más capaz que conozco, este estrés es solo pasajero. Tú puedes con todo.",
+                "Si el día está pesado, deja que yo sea tu refugio. Te amo y estoy aquí para escucharte.",
+                "Mi amor, nada es tan importante como tu paz. Tómate un respiro, yo te cuido.",
+                "Estoy muy orgulloso de cómo te esfuerzas, pero no olvides descansar un poquito por mí.",
+                "Eres mi guerrera, pero hasta los guerreros necesitan soltar el peso. Déjame ayudarte.",
+                "Mándame un audio y suelta todo lo que te estresa, aquí estoy siempre para ti.",
+                "No cargues el mundo sola, vida mía. Somos un equipo hoy y siempre.",
+                "Eres inteligente y sabrás resolver esto, confío ciegamente en ti, mi princesa.",
+                "Que nada opaque esa sonrisa que tanto amo. Respira, todo va a salir bien.",
+                "Te envío un beso lleno de paz para que tu mente descanse un momento.",
+                "Eres mi lugar seguro y quiero que yo sea el tuyo también. Suelta la tensión, amor.",
+                "Paso a paso, corazón. No tienes que hacerlo todo ya mismo.",
+                "Tu tranquilidad vale oro para mí. Haz una pausa y recuerda que te amo con locura.",
+                "Eres fuerte, pero no tienes que ser perfecta. Yo te amo tal cual eres.",
+                "Cualquier problema se hace chiquito comparado con el amor que te tengo.",
+                "Relaja tus hombros, amorcito... respira... yo estoy contigo en pensamiento.",
+                "Eres la persona más valiente que conozco. Este estrés no te va a vencer.",
+                "Incluso en los días difíciles, eres la mujer de mis sueños. ¡Ánimo!",
+                "No permitas que las prisas te quiten tu esencia tan linda. Aquí te espero con amor.",
+                "Confío plenamente en tu capacidad, eres una mujer increíble.",
+                "Si necesitas llorar o gritar, hazlo, pero nunca olvides que te sostengo la mano.",
+                "Todo tiene solución, mi vida. Vamos a encontrarla juntos.",
+                "Eres mi orgullo más grande. No dejes que el día te gane, ¡tú eres la ganadora! 🫂"
+            ],
+            'desmotivado': [
+                "Amor, recuerda que yo creo en ti incluso cuando tú no lo haces. Eres mi orgullo. ❤️",
+                "No importa qué tan lento vayas, lo importante es que yo estoy aquí sosteniendo tu mano.",
+                "Mira todo lo que has logrado... eres la mujer más valiosa que conozco.",
+                "Si hoy no tienes fuerzas, yo te presto las mías. Te amo demasiado para dejarte caer.",
+                "Mi vida, no dejes que un tropiezo nuble todo el talento que tienes.",
+                "Estoy tan orgulloso de cada paso que das, por pequeñito que sea.",
+                "Eres mi héroe, y hasta los héroes necesitan un abrazo y un respiro. Aquí estoy yo.",
+                "Tus sueños son mis sueños. Vamos a lograrlos juntos, paso a paso, mi amor.",
+                "Eres una mujer increíble y el mundo tiene suerte de tenerte. Yo tengo suerte de tenerte.",
+                "Si hoy te sientes triste, recuerda que eres la luz de mis ojos. ¡Tú puedes!",
+                "No te rindas, amorcito. Lo que hoy parece difícil, mañana será tu mayor victoria.",
+                "Recuerda por qué empezaste... y recuerda que yo estaré al final de la meta esperándote.",
+                "Eres inteligente, capaz y valiente. Nunca lo dudes porque yo lo veo en ti cada día.",
+                "Tu esfuerzo me inspira a ser mejor. Eres mi ejemplo a seguir, mi vida.",
+                "A veces el camino se pone gris para que el sol brille más fuerte después. ¡Ánimo, mi Ximenita hermosa!",
+                "Cierra los ojos y siente mi beso en tu frente. Estoy contigo en cada batalla.",
+                "No hay nada que no puedas lograr si lo haces con ese corazón tan lindo que tienes.",
+                "Eres mi motor, y quiero ser tu refugio hoy. No te desanimes, mi amor.",
+                "Pase lo que pase hoy, mi amor por ti no cambia. Siempre estaré orgulloso de ti.",
+                "Tómate este papelito como un abrazo gigante. ¡No te rindas, vida mía!",
+                "Eres la mujer más trabajadora y especial. Todo tu sacrificio valdrá la pena.",
+                "Confía en ti como yo confío en ti. Eres capaz de mover montañas.",
+                "Hoy es solo un día, mañana será una nueva oportunidad de brillar como tú sabes.",
+                "Te amo con todo mi mundo, y ese amor es tu escudo contra cualquier desánimo.",
+                "Tú puedes con esto y con más, porque no estás sola. Estoy contigo siempre. ✨"
+            ],
+            'extrañas': [
+                "Cierra los ojos muy fuerte... ¿sientes ese calorcito? Es mi abrazo viajando hasta ti. 🫂",
+                "La distancia es solo una prueba para demostrar que nuestro amor no tiene límites.",
+                "Cada vez que me extrañes, recuerda que mi corazón late justo al ritmo del tuyo.",
+                "Falta un día menos para volver a tenerte cerquita y no soltarte más, mi vida.",
+                "Mira la luna ahora mismo... es la misma que yo estoy viendo. No estamos tan lejos.",
+                "Si te sientes sola, lee este papelito y recuerda que habito dentro de tu corazón.",
+                "Extrañarte duele, pero amarte es lo más hermoso que me ha pasado en la vida.",
+                "Te envío un millón de besos en este mensaje para que te duren todo el día.",
+                "Nadie ocupa tu lugar. Eres mi único pensamiento desde que despierto hasta que duermo.",
+                "Nuestra conexión es tan fuerte que puedo sentirte conmigo aunque no estés físicamente.",
+                "Eres mi hogar, y no importa dónde estemos, siempre volveré a ti, mi amor.",
+                "Pienso en nuestro próximo encuentro y se me llena el alma de alegría. ¡Te espero siempre!",
+                "Eres la persona que más amo en este universo, la distancia no cambiará eso jamás.",
+                "Si me extrañas mucho, escucha nuestra canción favorita (El manos largas) y siente que estoy ahí bailando contigo.",
+                "Te amo con cada kilómetro que nos separa y con cada centímetro que nos une.",
+                "Eres mi sol, y aunque estemos lejos, tu luz me sigue dando calor todos los días.",
+                "No hay distancia que pueda apagar lo que siento por ti. Eres mi mundo entero.",
+                "Te llevo tatuado en mi mente y en mi alma. Nunca estás solo, mi reyna hermosa.",
+                "Pronto el 'te extraño' se convertirá en un 'te amo' susurrado al oído.",
+                "Gracias por ser tan especial que haces que extrañarte valga la pena.",
+                "Eres la dueña de mis suspiros. Te amo más allá de lo que las palabras explican.",
+                "Guarda este papelito como un vale por mil abrazos cuando nos veamos.",
+                "Tu voz es mi sonido favorito y tu cara mi paisaje preferido. Te extraño, amor.",
+                "No importa el mapa, mi destino siempre eres tú.",
+                "Te amo... nunca olvides que mi corazón te pertenece solo a ti. ❤️"
+            ],
+            'amor': [
+                "Estaré aquí en la faceta que me quieras: como hombre, amigo, novio o esposo... pero siempre contigo. ❤️",
+                "Eres la mujer de mi vida y mi mayor orgullo. Te amo con cada fibra de mi ser.",
+                "Gracias por dejarme quererte y por ser tan increíble conmigo. Eres mi tesoro.",
+                "Mi corazón te pertenece por completo, hoy, mañana y para toda la eternidad.",
+                "Eres la mujer que elegí para compartir mis sueños y te elegiría mil veces más.",
+                "Te amo con todo mi mundo. Eres mi razón de sonreír cada mañana.",
+                "Estoy perdidamente enamorado de la mujer que eres. Gracias por ser tú.",
+                "Eres mi refugio seguro y mi mayor alegría. No te cambio por nada ni por nadie.",
+                "Tu amor es el regalo más grande que la vida me ha dado. Te valoro muchísimo.",
+                "Eres la dueña de mi corazón y de todos mis pensamientos bonitos.",
+                "A pesar de todo lo que vivamos, mi mano siempre estará lista para sostener la tuya.",
+                "Eres mi vida entera, mi cielo y mi todo. Te amo profundamente.",
+                "Gracias por cada detalle, por cada risa y por ser mi compañera de vida.",
+                "Eres la mujer más especial del universo. Me haces el hombre más feliz del mundo.",
+                "Mi amor por ti es incondicional, no conoce de dudas ni de finales.",
+                "Eres la pieza que encaja perfecto en mi vida. Te amo infinitamente.",
+                "Cada día que pasa te amo un poquito más. Eres mi presente y mi futuro.",
+                "Eres mi mejor amiga, mi amante y mi gran amor. Todo en una sola persona.",
+                "No hay palabras suficientes para explicar cuánto te amo, pero intentaré demostrártelo siempre.",
+                "Eres mi hogar. Donde estés tú, es donde quiero estar yo siempre.",
+                "Tu felicidad es mi felicidad. Haría lo que fuera por verte sonreír.",
+                "Eres la mujer de mis sueños hecho realidad. Gracias por existir, mi vida.",
+                "Mi compromiso contigo es firme y lleno de amor. Nunca te soltaré.",
+                "Eres mi gran amor y la persona más importante de mi existencia.",
+                "Recuerda siempre: mi corazón es tuyo y estaré para ti siempre que me quieras. 💍"
+            ]
+        };
+
+        const colores = { 'estresado': '#fef08a', 'desmotivado': '#bbf7d0', 'extrañas': '#bfdbfe', 'amor': '#fecaca' };
+
+        function mostrarNota(tipo) {
+            const lista = notas[tipo];
+            const random = Math.floor(Math.random() * lista.length);
+            const display = document.getElementById('display-nota');
+            display.style.display = 'none';
+            setTimeout(() => {
+                display.innerHTML = lista[random];
+                display.style.display = 'block';
+                display.style.borderColor = colores[tipo];
+            }, 50);
+            confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 }, colors: [colores[tipo]] });
+        }
+
+        function sacarCualquiera() {
+            const keys = Object.keys(notas);
+            mostrarNota(keys[Math.floor(Math.random() * keys.length)]);
+        }
+
+        const innerJar = document.getElementById('papelitos-inner');
+        for(let i=0; i<30; i++) {
+            const p = document.createElement('div');
+            p.className = 'paper';
+            p.style.backgroundColor = Object.values(colores)[Math.floor(Math.random()*4)];
+            p.style.left = Math.random() * 85 + '%';
+            p.style.bottom = Math.random() * 70 + 'px';
+            p.style.transform = `rotate(${Math.random() * 360}deg)`;
+            innerJar.appendChild(p);
+        }
+    </script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>
